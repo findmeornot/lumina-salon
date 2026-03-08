@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  @apply text-gray-900 dark:text-white;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(8px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Glassmorphism helpers */
+.app-bg {
+  @apply min-h-screen bg-gray-50 dark:bg-[#1E1E2F] relative overflow-hidden;
+}
+.app-bg::before {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background:
+    radial-gradient(900px 500px at 15% 10%, rgba(20, 184, 166, 0.28), transparent 60%),
+    radial-gradient(700px 450px at 85% 20%, rgba(251, 146, 60, 0.22), transparent 55%),
+    radial-gradient(900px 600px at 55% 85%, rgba(56, 189, 248, 0.16), transparent 60%),
+    linear-gradient(to bottom, rgba(255,255,255,0.7), rgba(255,255,255,0));
+  pointer-events: none;
+  filter: blur(0px);
+}
+.app-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+.glass {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.60);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10);
+}
+.glass-soft {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+.dark .glass {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.10);
+}
+.dark .glass-soft {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.10);
+}
+.glass-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-teal-400/70 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-[#1E1E2F];
+}
+
+/* Backward compatible utility classes used by older pages */
+.card {
+  @apply rounded-lg p-4;
+}
+.card {
+  /* layered so Tailwind applies spacing, then CSS sets glass */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: rgba(255, 255, 255, 0.60);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10);
+}
+.dark .card {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.10);
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-md font-medium transition h-10 px-4 text-sm;
+  @apply bg-teal-500 text-white hover:bg-teal-600;
+  @apply disabled:opacity-60 disabled:cursor-not-allowed;
+}
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-md font-medium transition h-10 px-4 text-sm;
+  @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+  @apply dark:bg-white/10 dark:text-white dark:hover:bg-white/[0.15];
+  @apply disabled:opacity-60 disabled:cursor-not-allowed;
+}
+.btn-primary, .btn-secondary {
+  @apply glass-ring;
+}
+
+.input {
+  @apply w-full rounded-md border px-3 py-2 text-sm outline-none transition;
+  @apply bg-white/55 dark:bg-white/[0.08] backdrop-blur-xl;
+  @apply border-white/40 dark:border-white/10;
+  @apply text-gray-900 dark:text-white;
+  @apply placeholder:text-gray-400 dark:placeholder:text-white/40;
+  @apply glass-ring;
+}
