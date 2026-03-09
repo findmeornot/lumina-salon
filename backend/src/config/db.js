@@ -9,6 +9,13 @@ const verifyDbConnection = async () => {
     await conn.query('SELECT 1');
 
     if (env.debugDb) {
+      console.log('[DB] config', {
+        host: env.db.host,
+        port: env.db.port,
+        user: env.db.user,
+        database: env.db.database
+      });
+
       const [metaRows] = await conn.query(
         'SELECT DATABASE() AS current_database, USER() AS user, @@hostname AS server_host, @@port AS server_port'
       );

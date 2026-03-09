@@ -11,6 +11,13 @@ const resolveBaseURL = () => {
     const envLooksLocal =
       typeof envBase === 'string' && /^(https?:\/\/)?(localhost|127\.0\.0\.1)(:\d+)?/i.test(envBase);
 
+    // When deployed remotely, never default to localhost.
+    if (isRemoteHost && (!envBase || String(envBase).trim() === '')) {
+      // This assumes `/api` is routed to the backend (same-origin deployment or reverse proxy).
+      // For separate frontend/backends, set VITE_API_BASE_URL to the backend public URL + `/api`.
+      return `${window.location.origin}/api`;
+    }
+
     if (isRemoteHost && envLooksLocal) {
       return `${window.location.origin}/api`;
     }

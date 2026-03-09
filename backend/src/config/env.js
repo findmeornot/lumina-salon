@@ -40,11 +40,13 @@ const urlDb =
   parseMysqlUrl(process.env.MYSQL_URL) ||
   parseMysqlUrl(process.env.MYSQL_PUBLIC_URL);
 
-const dbHost = urlDb?.host || process.env.MYSQLHOST || process.env.DB_HOST || 'localhost';
-const dbPort = urlDb?.port || Number(process.env.MYSQLPORT || process.env.DB_PORT || 3306);
-const dbUser = urlDb?.user || process.env.MYSQLUSER || process.env.DB_USER || 'root';
-const dbPassword = urlDb?.password || process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '';
-const dbName = urlDb?.database || process.env.MYSQLDATABASE || process.env.DB_NAME || 'lumina';
+// Allow explicit vars (MYSQL*/DB_*) to override URL pieces. This is important on Railway where DATABASE_URL
+// may point to the default schema (often `railway`) while your imported tables live in another schema.
+const dbHost = process.env.MYSQLHOST || process.env.DB_HOST || urlDb?.host || 'localhost';
+const dbPort = Number(process.env.MYSQLPORT || process.env.DB_PORT || urlDb?.port || 3306);
+const dbUser = process.env.MYSQLUSER || process.env.DB_USER || urlDb?.user || 'root';
+const dbPassword = process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || urlDb?.password || '';
+const dbName = process.env.MYSQLDATABASE || process.env.DB_NAME || urlDb?.database || 'lumina';
 
 module.exports = {
   backendRoot,

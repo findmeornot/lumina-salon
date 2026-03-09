@@ -16,21 +16,27 @@ const qrRoutes = require('./routes/qrRoutes');
 const app = express();
 
 app.use(helmet());
-const allowedOrigins = String(env.frontendUrl || '')
-  .split(',')
+const allowedOrigins = [
+  env.frontendUrl,
+  env.appPublicUrl,
+  process.env.CORS_ORIGINS
+]
+  .filter(Boolean)
+  .flatMap((value) => String(value).split(','))
   .map((s) => s.trim())
   .filter(Boolean);
+const allowedOriginSet = new Set(allowedOrigins);
 
 // CORS should never break static assets (CSS/JS). Also, when the frontend is served from
 // the same host (e.g. via ngrok pointing to the backend), we allow that origin implicitly.
 // If an origin isn't allowed, we simply disable CORS for that request (no thrown error),
 // letting same-origin navigation/assets still work.
-app.use(cors((req, cb) => {
+const corsOptionsDelegate = (req, cb) => {
   const origin = req.header('Origin');
   const host = req.get('host');
 
   if (!origin) {
-    return cb(null, { origin: false, credentials: true });
+    return cb(null, { origin: false, credentials: true, optionsSuccessStatus: 204 });
   }
 
   let isSameHost = false;
@@ -42,11 +48,14 @@ app.use(cors((req, cb) => {
 
   const isAllowed =
     isSameHost ||
-    allowedOrigins.includes(origin) ||
+    allowedOriginSet.has(origin) ||
     (env.nodeEnv === 'development' && /^https?:\/\/localhost:517\d$/.test(origin));
 
-  return cb(null, { origin: isAllowed, credentials: true });
-}));
+  return cb(null, { origin: isAllowed, credentials: true, optionsSuccessStatus: 204 });
+};
+app.use(cors(corsOptionsDelegate));
+// Ensure preflight OPTIONS always gets CORS headers when allowed.
+app.options('*', cors(corsOptionsDelegate));
 app.use(express.json());
 app.use(morgan('dev'));
 app.use('/uploads', express.static(env.uploadDir));
