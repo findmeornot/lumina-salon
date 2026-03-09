@@ -13,6 +13,39 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+const truthy = (value) => ['1', 'true', 'yes', 'y', 'on'].includes(String(value || '').trim().toLowerCase());
+
+const parseMysqlUrl = (urlValue) => {
+  if (!urlValue) return null;
+  try {
+    const u = new URL(urlValue);
+    const protocol = String(u.protocol || '').toLowerCase();
+    if (protocol !== 'mysql:' && protocol !== 'mariadb:') return null;
+
+    const databaseFromPath = String(u.pathname || '').replace(/^\/+/, '');
+    return {
+      host: u.hostname,
+      port: Number(u.port || 3306),
+      user: decodeURIComponent(u.username || ''),
+      password: decodeURIComponent(u.password || ''),
+      database: databaseFromPath
+    };
+  } catch {
+    return null;
+  }
+};
+
+const urlDb =
+  parseMysqlUrl(process.env.DATABASE_URL) ||
+  parseMysqlUrl(process.env.MYSQL_URL) ||
+  parseMysqlUrl(process.env.MYSQL_PUBLIC_URL);
+
+const dbHost = urlDb?.host || process.env.MYSQLHOST || process.env.DB_HOST || 'localhost';
+const dbPort = urlDb?.port || Number(process.env.MYSQLPORT || process.env.DB_PORT || 3306);
+const dbUser = urlDb?.user || process.env.MYSQLUSER || process.env.DB_USER || 'root';
+const dbPassword = urlDb?.password || process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '';
+const dbName = urlDb?.database || process.env.MYSQLDATABASE || process.env.DB_NAME || 'lumina';
+
 module.exports = {
   backendRoot,
   nodeEnv: process.env.NODE_ENV || 'development',
@@ -31,11 +64,11 @@ module.exports = {
     email: process.env.ADMIN_DASH_EMAIL || 'admin@lumina.local'
   },
   db: {
-    host: process.env.DB_HOST || 'localhost',
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'lumina',
+    host: dbHost,
+    port: dbPort,
+    user: dbUser,
+    password: dbPassword,
+    database: dbName,
     waitForConnections: true,
     connectionLimit: Number(process.env.DB_POOL_LIMIT || 25),
     queueLimit: 0,
@@ -44,6 +77,7 @@ module.exports = {
     // Prevent DATE/DATETIME columns from becoming JS Date objects (which JSON-stringify to ISO with "T...Z").
     dateStrings: true
   },
+  debugDb: truthy(process.env.DEBUG_DB || process.env.DB_DEBUG),
   uploadDir,
   roomQrSecret: process.env.ROOM_QR_SECRET || 'LUMINA_ROOM_FIXED_QR',
   smtp: {
