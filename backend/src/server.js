@@ -20,7 +20,7 @@ const bootstrap = async () => {
     });
     registerCronJobs();
   } catch (err) {
-    console.error('Failed to connect to MySQL. Check DB_* in backend/.env');
+    console.error('Failed to connect to MySQL. Check DB_* or Railway MYSQL* environment variables.');
     console.error(err.message);
     process.exit(1);
   }
