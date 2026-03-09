@@ -16,6 +16,8 @@ const qrRoutes = require('./routes/qrRoutes');
 const app = express();
 
 app.use(helmet());
+const truthy = (value) => ['1', 'true', 'yes', 'y', 'on'].includes(String(value || '').trim().toLowerCase());
+const normalizeOrigin = (value) => String(value || '').trim().replace(/\/+$/, '').toLowerCase();
 const allowedOrigins = [
   env.frontendUrl,
   env.appPublicUrl,
@@ -25,7 +27,8 @@ const allowedOrigins = [
   .flatMap((value) => String(value).split(','))
   .map((s) => s.trim())
   .filter(Boolean);
-const allowedOriginSet = new Set(allowedOrigins);
+const allowedOriginSet = new Set(allowedOrigins.map(normalizeOrigin));
+const debugCors = truthy(process.env.DEBUG_CORS);
 
 // CORS should never break static assets (CSS/JS). Also, when the frontend is served from
 // the same host (e.g. via ngrok pointing to the backend), we allow that origin implicitly.
@@ -33,6 +36,7 @@ const allowedOriginSet = new Set(allowedOrigins);
 // letting same-origin navigation/assets still work.
 const corsOptionsDelegate = (req, cb) => {
   const origin = req.header('Origin');
+  const normalizedOrigin = normalizeOrigin(origin);
   const host = req.get('host');
 
   if (!origin) {
@@ -48,8 +52,20 @@ const corsOptionsDelegate = (req, cb) => {
 
   const isAllowed =
     isSameHost ||
-    allowedOriginSet.has(origin) ||
+    allowedOriginSet.has(normalizedOrigin) ||
+    allowedOriginSet.has('*') ||
     (env.nodeEnv === 'development' && /^https?:\/\/localhost:517\d$/.test(origin));
+
+  if (debugCors) {
+    console.log('[CORS]', {
+      origin,
+      normalizedOrigin,
+      host,
+      isSameHost,
+      isAllowed,
+      configured: Array.from(allowedOriginSet)
+    });
+  }
 
   return cb(null, { origin: isAllowed, credentials: true, optionsSuccessStatus: 204 });
 };
