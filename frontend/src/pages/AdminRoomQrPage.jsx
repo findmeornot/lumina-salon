@@ -8,8 +8,7 @@ const AdminRoomQrPage = () => {
   const toast = useToast();
   const { data, refetch, isFetching } = useQuery({
     queryKey: ['admin', 'room-qr'],
-    queryFn: async () => (await api.get('/qr/room')).data,
-    refetchInterval: 5000
+    queryFn: async () => (await api.get('/qr/room')).data
   });
 
   const copy = async () => {
@@ -65,4 +64,3 @@ const AdminRoomQrPage = () => {
 };
 
 export default AdminRoomQrPage;
-

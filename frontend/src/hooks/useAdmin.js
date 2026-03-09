@@ -8,14 +8,12 @@ export const useAdminDashboard = () => useQuery({
 
 export const useAdminBookings = () => useQuery({
   queryKey: ['admin', 'bookings'],
-  queryFn: async () => (await api.get('/admin/bookings')).data,
-  refetchInterval: 10000
+  queryFn: async () => (await api.get('/admin/bookings')).data
 });
 
 export const useAdminUsers = () => useQuery({
   queryKey: ['admin', 'users'],
-  queryFn: async () => (await api.get('/admin/users')).data,
-  refetchInterval: 15000
+  queryFn: async () => (await api.get('/admin/users')).data
 });
 
 export const useAnalytics = () => useQuery({
@@ -25,6 +23,5 @@ export const useAnalytics = () => useQuery({
 
 export const useAdminCheckinLogs = () => useQuery({
   queryKey: ['admin', 'checkins'],
-  queryFn: async () => (await api.get('/admin/logs/checkins')).data,
-  refetchInterval: 10000
+  queryFn: async () => (await api.get('/admin/logs/checkins')).data
 });

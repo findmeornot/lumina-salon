@@ -12,6 +12,7 @@ const bookingRoutes = require('./routes/bookingRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const qrRoutes = require('./routes/qrRoutes');
+const infoRoutes = require('./routes/infoRoutes');
 
 const app = express();
 
@@ -77,11 +78,24 @@ app.use(morgan('dev'));
 app.use('/uploads', express.static(env.uploadDir));
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
+if (debugCors) {
+  app.get('/api/debug/cors', (req, res) => {
+    res.json({
+      origin: req.header('Origin') || null,
+      host: req.get('host') || null,
+      frontendUrl: env.frontendUrl || null,
+      appPublicUrl: env.appPublicUrl || null,
+      corsOrigins: process.env.CORS_ORIGINS || null,
+      allowedOrigins: Array.from(allowedOriginSet)
+    });
+  });
+}
 app.use('/api/auth', authRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/qr', qrRoutes);
+app.use('/api/info', infoRoutes);
 
 const frontendDist = path.join(env.backendRoot, '..', 'frontend', 'dist');
 if (fs.existsSync(frontendDist)) {

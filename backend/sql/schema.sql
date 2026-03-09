@@ -134,3 +134,48 @@ FROM bookings
 WHERE status IN ('Approved', 'Completed', 'Checked-In')
 GROUP BY YEARWEEK(booking_date, 1);
 
+-- Facility information (admin-managed content shown in the app)
+CREATE TABLE IF NOT EXISTS facility_info (
+  id TINYINT UNSIGNED PRIMARY KEY,
+  rules_terms TEXT NOT NULL,
+  booking_terms TEXT NOT NULL,
+  operational_notes TEXT NOT NULL,
+  equipment_check_schedule TEXT NOT NULL,
+  updated_by BIGINT UNSIGNED NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_facility_info_updated_by FOREIGN KEY (updated_by) REFERENCES users(id)
+);
+
+INSERT INTO facility_info (id, rules_terms, booking_terms, operational_notes, equipment_check_schedule)
+VALUES (
+  1,
+  'Tulis aturan & ketentuan penggunaan fasilitas di sini.',
+  'Tulis ketentuan booking penggunaan di sini.',
+  'Tulis informasi jam operasional/ketentuan tambahan di sini.',
+  'Tulis jadwal cek pengurus alat kecantikan di sini.'
+)
+AS new
+ON DUPLICATE KEY UPDATE
+  rules_terms = new.rules_terms,
+  booking_terms = new.booking_terms,
+  operational_notes = new.operational_notes,
+  equipment_check_schedule = new.equipment_check_schedule;
+
+-- Beauty tools directory (admin-managed)
+CREATE TABLE IF NOT EXISTS beauty_tools (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(160) NOT NULL,
+  description TEXT NULL,
+  benefits TEXT NULL,
+  usage_instructions TEXT NULL,
+  photo_url VARCHAR(255) NULL,
+  is_active TINYINT(1) NOT NULL DEFAULT 1,
+  created_by BIGINT UNSIGNED NULL,
+  updated_by BIGINT UNSIGNED NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_beauty_tools_created_by FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+  CONSTRAINT fk_beauty_tools_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL,
+  INDEX idx_beauty_tools_active_name (is_active, name)
+);
+

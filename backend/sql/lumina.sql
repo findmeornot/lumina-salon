@@ -170,6 +170,54 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 -- Pengeluaran data tidak dipilih.
 
+-- membuang struktur untuk table lumina.facility_info
+CREATE TABLE IF NOT EXISTS `facility_info` (
+  `id` tinyint unsigned NOT NULL,
+  `rules_terms` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `booking_terms` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `operational_notes` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `equipment_check_schedule` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `updated_by` bigint unsigned DEFAULT NULL,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `fk_facility_info_updated_by` (`updated_by`),
+  CONSTRAINT `fk_facility_info_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Pengeluaran data tidak dipilih.
+
+INSERT INTO `facility_info` (`id`, `rules_terms`, `booking_terms`, `operational_notes`, `equipment_check_schedule`)
+VALUES
+  (1, 'Tulis aturan & ketentuan penggunaan fasilitas di sini.', 'Tulis ketentuan booking penggunaan di sini.', 'Tulis informasi jam operasional/ketentuan tambahan di sini.', 'Tulis jadwal cek pengurus alat kecantikan di sini.')
+ON DUPLICATE KEY UPDATE
+  `rules_terms` = VALUES(`rules_terms`),
+  `booking_terms` = VALUES(`booking_terms`),
+  `operational_notes` = VALUES(`operational_notes`),
+  `equipment_check_schedule` = VALUES(`equipment_check_schedule`);
+
+-- membuang struktur untuk table lumina.beauty_tools
+CREATE TABLE IF NOT EXISTS `beauty_tools` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(160) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `benefits` text COLLATE utf8mb4_unicode_ci,
+  `usage_instructions` text COLLATE utf8mb4_unicode_ci,
+  `photo_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_by` bigint unsigned DEFAULT NULL,
+  `updated_by` bigint unsigned DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `fk_beauty_tools_created_by` (`created_by`),
+  KEY `fk_beauty_tools_updated_by` (`updated_by`),
+  KEY `idx_beauty_tools_active_name` (`is_active`,`name`),
+  CONSTRAINT `fk_beauty_tools_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_beauty_tools_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Pengeluaran data tidak dipilih.
+
 -- membuang struktur untuk view lumina.weekly_booking_stats
 -- Membuat tabel sementara untuk menangani kesalahan ketergantungan VIEW
 CREATE TABLE `weekly_booking_stats` (

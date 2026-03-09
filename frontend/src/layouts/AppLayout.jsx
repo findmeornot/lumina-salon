@@ -29,6 +29,8 @@ const AppLayout = () => {
         { to: '/admin/bookings', label: 'Booking Management' },
         { to: '/admin/users', label: 'User Management' },
         { to: '/admin/room', label: 'Room QR & Code' },
+        { to: '/admin/facility', label: 'Facility Info' },
+        { to: '/admin/tools', label: 'Tools Directory' },
         { to: '/admin/logs', label: 'Check-in Logs' },
         { to: '/admin/analytics', label: 'Analytics' },
         { to: '/admin/create-admin', label: 'Create Admin' }
@@ -39,6 +41,8 @@ const AppLayout = () => {
       { to: '/', label: t('dashboard') },
       { to: '/calendar', label: t('bookingCalendar') },
       { to: '/history', label: 'History' },
+      { to: '/facility', label: 'Info Fasilitas' },
+      { to: '/tools', label: 'Directory Alat' },
       { to: '/profile', label: t('profile') },
       { to: '/scanner', label: 'QR Scanner' }
     ];

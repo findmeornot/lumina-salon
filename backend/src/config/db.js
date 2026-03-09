@@ -24,6 +24,12 @@ const verifyDbConnection = async () => {
       const [bookingsRows] = await conn.query("SHOW TABLES LIKE 'bookings'");
       console.log('[DB] bookings table present:', bookingsRows.length > 0);
 
+      const [facilityInfoRows] = await conn.query("SHOW TABLES LIKE 'facility_info'");
+      console.log('[DB] facility_info table present:', facilityInfoRows.length > 0);
+
+      const [toolsRows] = await conn.query("SHOW TABLES LIKE 'beauty_tools'");
+      console.log('[DB] beauty_tools table present:', toolsRows.length > 0);
+
       const [tablesRows] = await conn.query('SHOW TABLES');
       const tableNames = tablesRows
         .map((row) => row[Object.keys(row)[0]])

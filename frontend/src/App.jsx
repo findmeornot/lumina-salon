@@ -18,6 +18,8 @@ import CreateBookingPage from './pages/CreateBookingPage';
 import EditBookingPage from './pages/EditBookingPage';
 import CancelBookingPage from './pages/CancelBookingPage';
 import BookingHistoryPage from './pages/BookingHistoryPage';
+import FacilityInfoPage from './pages/FacilityInfoPage';
+import ToolsDirectoryPage from './pages/ToolsDirectoryPage';
 import ProfilePage from './pages/ProfilePage';
 import QrScannerPage from './pages/QrScannerPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
@@ -27,8 +29,19 @@ import AnalyticsDashboardPage from './pages/AnalyticsDashboardPage';
 import CreateAdminPage from './pages/CreateAdminPage';
 import AdminRoomQrPage from './pages/AdminRoomQrPage';
 import AdminCheckinLogsPage from './pages/AdminCheckinLogsPage';
+import AdminFacilityInfoPage from './pages/AdminFacilityInfoPage';
+import AdminBeautyToolsPage from './pages/AdminBeautyToolsPage';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Prevent auto-polling/refresh storms that can feel laggy on slower devices/networks.
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      retry: false
+    }
+  }
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -55,6 +68,8 @@ const App = () => (
               <Route path="bookings/edit" element={<EditBookingPage />} />
               <Route path="bookings/cancel" element={<CancelBookingPage />} />
               <Route path="history" element={<BookingHistoryPage />} />
+              <Route path="facility" element={<FacilityInfoPage />} />
+              <Route path="tools" element={<ToolsDirectoryPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="scanner" element={<QrScannerPage />} />
               <Route
@@ -94,6 +109,22 @@ const App = () => (
                 element={
                   <ProtectedRoute role="admin">
                     <AdminRoomQrPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="admin/facility"
+                element={
+                  <ProtectedRoute role="admin">
+                    <AdminFacilityInfoPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="admin/tools"
+                element={
+                  <ProtectedRoute role="admin">
+                    <AdminBeautyToolsPage />
                   </ProtectedRoute>
                 }
               />

@@ -3,14 +3,12 @@ import api from '../services/api';
 
 export const useOwnBookings = () => useQuery({
   queryKey: ['bookings', 'mine'],
-  queryFn: async () => (await api.get('/bookings/mine')).data,
-  refetchInterval: 10000
+  queryFn: async () => (await api.get('/bookings/mine')).data
 });
 
 export const useCalendarBookings = (range) => useQuery({
   queryKey: ['bookings', 'calendar', range?.start || null, range?.end || null],
-  queryFn: async () => (await api.get('/bookings/calendar', { params: range || undefined })).data,
-  refetchInterval: 10000
+  queryFn: async () => (await api.get('/bookings/calendar', { params: range || undefined })).data
 });
 
 export const useCreateBooking = () => {
